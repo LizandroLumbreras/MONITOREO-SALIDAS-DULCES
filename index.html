@@ -44,7 +44,7 @@
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Configura tu Firebase
     const firebaseConfig = {
@@ -61,7 +61,10 @@
     const contenedor = document.getElementById("contenedor");
 
     async function cargarSalidas(){
-      const querySnap = await getDocs(collection(db,"almacenes/Almacen_Dulces/salidas"));
+      // 🔹 Traer salidas ordenadas por folio descendente
+      const q = query(collection(db,"almacenes/Almacen_Dulces/salidas"), orderBy("folio","desc"));
+      const querySnap = await getDocs(q);
+
       querySnap.forEach(doc=>{
         const data = doc.data();
 
