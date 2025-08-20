@@ -6,17 +6,44 @@
   <title>Monitoreo – Salidas Dulces</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-   body{
+  body{
   font-family:'Poppins',sans-serif;
-  background:linear-gradient(to right,#00416A,#E4E5E6);
   margin:0; padding:12px;
+  min-height:100vh;
+  background: linear-gradient(to right,#00416A,#E4E5E6);
+  position: relative;
 }
-h1{ text-align:center; color:white; margin:10px 0 }
+/* 🔹 Marca de agua general en el fondo */
+body::before{
+  content:"";
+  position: fixed;
+  top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: clamp(500px, 60vw, 1000px);  /* tamaño flexible */
+  height: auto;
+  background: url('logo_proveedora.webp') no-repeat center center;
+  background-size: contain;
+  opacity: 0.08;      /* transparencia 👈 ajusta entre 0.05 y 0.12 */
+  z-index: 0;
+  pointer-events: none; /* no bloquea clics */
+}
+
+h1{ 
+  text-align:center; 
+  color:white; 
+  margin:10px 0; 
+  position: relative;
+  z-index: 1; 
+}
 .tarjeta{
-  background:#fff; border-radius:10px; padding:10px 14px; 
+  background: rgba(255,255,255,0.88); /* 👈 blanco con transparencia */
+  border-radius:10px; 
+  padding:10px 14px; 
   box-shadow:0 2px 5px rgba(0,0,0,0.15);
   margin-bottom:12px;
   font-size:13px;
+  position: relative;
+  z-index: 1; /* para estar arriba del fondo */
 }
 .tarjeta h2{ margin:0; font-size:15px; color:#00416A }
 .productos{ width:100%; border-collapse:collapse; margin-top:6px; font-size:12px }
