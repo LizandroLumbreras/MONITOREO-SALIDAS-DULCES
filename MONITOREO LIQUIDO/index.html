@@ -61,79 +61,12 @@
     cursor:pointer; font-size:12px;
   }
 
- @media print {
-  body {
-    background: white !important;
-    margin: 0;
-    padding: 0;
-    font-size: 10pt;
-    width: 58mm;
+  /* impresión de toda la página (no se usa para el ticket del popup) */
+  @media print {
+    body { background: white !important; margin: 0; padding: 0; font-size: 10pt; width: 58mm; }
+    h1, .btn-imprimir, body::before { display: none; }
+    .tarjeta { display:none; }
   }
-
-  h1 { display: none; }
-
-  .tarjeta {
-    box-shadow: none !important;
-    border: none !important;
-    border-bottom: 1px dashed #000;
-    margin: 0 0 12px 0;
-    padding: 4px;
-    width: 100%;
-    max-width: 100%;
-    background: white !important;
-    page-break-inside: avoid;
-  }
-
-  .tarjeta h2 {
-    font-size: 11pt;
-    text-align: center;
-    margin-bottom: 4px;
-  }
-
-  .productos {
-    font-size: 9pt;
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  .productos th {
-    background: none !important;
-    color: black !important;
-    font-weight: bold;
-    border-bottom: 1px solid #000;
-  }
-
-  .productos td {
-    border: none;
-    text-align: left;
-    padding: 2px 0;
-  }
-
-  .firmas {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-  }
-
-  .firma-box {
-    font-size: 8pt;
-    text-align: center;
-    width: 48%;
-  }
-
-  .firma-box img {
-    max-width: 100px;
-    max-height: 40px;
-  }
-
-  .btn-imprimir {
-    display: none !important;
-  }
-
-  body::before {
-    display: none;
-  }
-}
   </style>
 </head>
 <body>
@@ -174,6 +107,9 @@
 
           const div = document.createElement("div");
           div.className="tarjeta";
+          // guardamos payload para la impresión exacta
+          div.dataset.payload = JSON.stringify(data);
+
           div.innerHTML=`
             <h2>Folio: ${data.folio || ""} – ${data.fecha || ""}</h2>
             <p><b>Destino:</b> ${data.destino || ""}</p>
@@ -182,7 +118,7 @@
               <thead><tr><th>Código</th><th>Producto</th><th>Cantidad</th></tr></thead>
               <tbody>
                 ${(data.productos || []).map(p=>`
-                  <tr><td>${p.codigo}</td><td>${p.descripcion}</td><td>${p.cantidad}</td></tr>
+                  <tr><td>${p.codigo || ""}</td><td>${p.descripcion || ""}</td><td>${p.cantidad || 0}</td></tr>
                 `).join("")}
               </tbody>
             </table>
@@ -196,21 +132,127 @@
                 ${data.firmaRecibe ? `<img src="${data.firmaRecibe}">` : "—"}
               </div>
             </div>
-            <button class="btn-imprimir" onclick="imprimirTarjeta(this)">🖨 Imprimir</button>
+            <button class="btn-imprimir">🖨 Imprimir</button>
           `;
+          div.querySelector(".btn-imprimir").addEventListener("click", ()=>imprimirTarjeta(div));
           contenedor.appendChild(div);
         });
       });
     }
     cargarSalidasTiempoReal();
 
-    // 🖨 Imprimir solo una tarjeta
-    window.imprimirTarjeta=function(btn){
-      const tarjeta=btn.parentElement.innerHTML;
-      const w=window.open("","","width=800,height=600");
-      w.document.write(`<html><head><title>Imprimir</title></head><body>${tarjeta}</body></html>`);
-      w.document.close();
-      w.print();
+    // 🖨 Imprimir una tarjeta como ticket térmico (vectorial y nítido)
+    window.imprimirTarjeta = function(tarjetaEl){
+      let payload = null;
+      try{ payload = JSON.parse(tarjetaEl.dataset.payload || "null"); }catch(_){}
+
+      if(!payload){
+        // fallback DOM → no debería ser necesario, pero por si acaso
+        const filas = [...tarjetaEl.querySelectorAll("tbody tr")].map(tr=>{
+          const tds = tr.querySelectorAll("td");
+          return { codigo: tds[0]?.textContent?.trim()||"", descripcion: tds[1]?.textContent?.trim()||"", cantidad: tds[2]?.textContent?.trim()||"0" };
+        });
+        const h2 = tarjetaEl.querySelector("h2")?.textContent || "";
+        const [folioTxt, fechaTxt] = h2.split("–").map(s=>(s||"").trim());
+        const destino = tarjetaEl.querySelector("p:nth-of-type(1)")?.textContent?.replace("Destino:","").trim() || "";
+        const entRec = tarjetaEl.querySelector("p:nth-of-type(2)")?.textContent || "";
+        const entrega = (entRec.match(/Entrega:\s*([^|]+)/)||[])[1]?.trim()||"";
+        const recibe  = (entRec.match(/Recibe:\s*(.+)$/)||[])[1]?.trim()||"";
+        payload = {
+          folio: (folioTxt||"").replace("Folio:","").trim(),
+          fecha: fechaTxt||"",
+          destino, entrega, recibe,
+          productos: filas
+        };
+      }
+
+      const styles = `
+        <style>
+          :root{ --w-mm:80; --pad-mm:3; --sep:1px dashed #000 } /* cambia 80→58 si tu impresora es 58mm */
+          @page{ size: calc(var(--w-mm)*1mm) auto; margin: 0 }
+          *{ box-sizing:border-box }
+          body{ margin:0; padding:0; background:#fff; color:#000;
+                font: 14px/1.4 ui-monospace, Menlo, "Courier New", monospace; }
+          .ticket{ width: calc(var(--w-mm)*1mm); padding: calc(var(--pad-mm)*1mm); }
+          .t-center{ text-align:center } .t-right{ text-align:right }
+          .h1{ font-weight:700; font-size:16px; letter-spacing:.4px }
+          .xs{ font-size:12px } .sm{ font-size:13px }
+          .line{ border-top: var(--sep); margin:8px 0 }
+
+          .logo{ display:block; margin:2px auto 6px; width: 45mm; max-width:100%;
+                 image-rendering: -webkit-optimize-contrast; }
+
+          .kv{ display:flex; justify-content:space-between; gap:6px; font-size:14px }
+          .kv b{ font-weight:700 }
+
+          .th,.tr{ display:flex; gap:2mm; font-size:14px; line-height:1.4 }
+          .th{ font-weight:700; border-bottom: var(--sep); padding:3px 0 4px }
+          .tr{ padding:3px 0 }
+          .col-cod{ width:22mm; white-space:nowrap; overflow:hidden }
+          .col-des{ flex:1 1 auto; overflow:hidden }
+          .col-cant{ width:12mm; text-align:right }
+
+          .firmas{ display:flex; gap:6mm; margin-top:10px }
+          .firma{ flex:1 1 0; text-align:center }
+          .firma img{ width: 42mm; max-width:100%; border:1px solid #000; background:#fff }
+        </style>
+      `;
+
+      const filasHTML = (payload.productos||[]).map(p=>`
+        <div class="tr">
+          <div class="col-cod">${(p.codigo||'')}</div>
+          <div class="col-des">${(p.descripcion||'').toUpperCase()}</div>
+          <div class="col-cant">${(p.cantidad||0)}</div>
+        </div>
+      `).join("");
+
+      const firmasHTML = `
+        <div class="firmas">
+          <div class="firma">
+            <div class="xs">Firma Entrega</div>
+            ${payload.firmaEntrega ? `<img src="${payload.firmaEntrega}" alt="Firma Entrega">` : `<div class="xs">—</div>`}
+          </div>
+          <div class="firma">
+            <div class="xs">Firma Recibe</div>
+            ${payload.firmaRecibe ? `<img src="${payload.firmaRecibe}" alt="Firma Recibe">` : `<div class="xs">—</div>`}
+          </div>
+        </div>
+      `;
+
+      const html = `
+        <!DOCTYPE html><html><head><meta charset="UTF-8">
+        <title>Ticket ${payload.folio||''}</title>${styles}</head>
+        <body>
+          <div class="ticket">
+            <img class="logo" src="logo_proveedora.webp" alt="Logo La Proveedora">
+            <div class="t-center h1">RESUMEN DE SALIDA – LÍQUIDOS</div>
+            <div class="line"></div>
+
+            <div class="kv"><span><b>Folio:</b> ${payload.folio||''}</span><span class="t-right">${payload.fecha||''}</span></div>
+            <div class="kv"><span><b>Entrega:</b> ${payload.entrega||''}</span></div>
+            <div class="kv"><span><b>Recibe:</b> ${payload.recibe||''}</span></div>
+            <div class="kv"><span><b>Destino:</b> ${payload.destino||''}</span></div>
+
+            <div class="line"></div>
+            <div class="th">
+              <div class="col-cod">CÓDIGO</div>
+              <div class="col-des">PRODUCTO</div>
+              <div class="col-cant">CANT</div>
+            </div>
+            ${filasHTML}
+
+            <div class="line"></div>
+            ${firmasHTML}
+
+            <div class="line"></div>
+            <div class="t-center xs">Gracias por su preferencia</div>
+          </div>
+          <script>window.onload = () => { window.print(); setTimeout(()=>window.close(), 300); }<\/script>
+        </body></html>
+      `;
+
+      const w = window.open("", "_blank", "width=450,height=700");
+      w.document.open(); w.document.write(html); w.document.close();
     }
   </script>
 </body>
