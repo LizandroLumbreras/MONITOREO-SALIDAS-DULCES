@@ -27,7 +27,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: clamp(500px, 65vw, 1000px);
+      width: clamp(500px, 70vw, 1000px);
       height: auto;
       background: url('logo_proveedora.webp') no-repeat center center;
       background-size: contain;
@@ -56,19 +56,21 @@
     }
 
     .card {
-      background: rgba(255,255,255,0.65); /* 🔹 Fondo traslúcido */
+      background: rgba(255, 255, 255, 0.25); /* 🔹 Translúcido */
+      backdrop-filter: blur(12px);           /* 🔹 Efecto cristal */
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 14px;
       padding: 30px 20px;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
     }
 
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-6px);
       box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      background: rgba(255,255,255,0.80); /* 🔹 Un poco más sólido al pasar el mouse */
+      background: rgba(255, 255, 255, 0.35); /* Un poco más sólido en hover */
     }
 
     .card h2 {
@@ -78,7 +80,7 @@
     }
 
     .card p {
-      color: #222;
+      color: #111;
       font-size: 14px;
       margin: 0;
     }
