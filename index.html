@@ -20,18 +20,18 @@
       overflow: hidden;
     }
 
-    /* 🔹 Marca de agua */
+    /* 🔹 Marca de agua grande (como en tu ejemplo) */
     body::before {
       content: "";
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: clamp(500px, 70vw, 1000px);
-      height: auto;
+      width: 80%;              /* ocupa gran parte de la pantalla */
+      height: 80%;
       background: url('logo_proveedora.webp') no-repeat center center;
       background-size: contain;
-      opacity: 0.08;
+      opacity: 0.12;           /* 🔹 Opacidad tenue para que no opaque el contenido */
       z-index: 0;
       pointer-events: none;
     }
@@ -57,7 +57,7 @@
 
     .card {
       background: rgba(255, 255, 255, 0.25); /* 🔹 Translúcido */
-      backdrop-filter: blur(12px);           /* 🔹 Efecto cristal */
+      backdrop-filter: blur(12px);           /* 🔹 efecto cristal */
       -webkit-backdrop-filter: blur(12px);
       border-radius: 14px;
       padding: 30px 20px;
@@ -70,7 +70,7 @@
     .card:hover {
       transform: translateY(-6px);
       box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      background: rgba(255, 255, 255, 0.35); /* Un poco más sólido en hover */
+      background: rgba(255, 255, 255, 0.35);
     }
 
     .card h2 {
