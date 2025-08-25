@@ -2,14 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú – Monitoreo de Salidas</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0; 
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
       min-height: 100vh;
       background: linear-gradient(to right,#00416A,#E4E5E6);
       display: flex;
@@ -17,23 +15,6 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow: hidden;
-    }
-
-    /* 🔹 Marca de agua grande (como en tu ejemplo) */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80%;              /* ocupa gran parte de la pantalla */
-      height: 80%;
-      background: url('logo_proveedora.webp') no-repeat center center;
-      background-size: contain;
-      opacity: 0.12;           /* 🔹 Opacidad tenue para que no opaque el contenido */
-      z-index: 0;
-      pointer-events: none;
     }
 
     h1 {
@@ -41,63 +22,64 @@
       color: white;
       margin-bottom: 30px;
       text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      z-index: 1;
-      position: relative;
     }
 
     .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      display: flex;
       gap: 20px;
-      width: 100%;
-      max-width: 800px;
-      z-index: 1;
-      position: relative;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.25); /* 🔹 Translúcido */
-      backdrop-filter: blur(12px);           /* 🔹 efecto cristal */
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 14px;
-      padding: 30px 20px;
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 12px;
+      width: 220px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
     }
 
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      background: rgba(255, 255, 255, 0.35);
-    }
+    .card:hover { transform: scale(1.05); }
 
-    .card h2 {
-      color: #00416A;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      color: #111;
+    /* 🔹 Botón PDF en la esquina */
+    .pdf-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: #e60000;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
       font-size: 14px;
-      margin: 0;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .pdf-btn:hover {
+      background-color: #b00000;
     }
   </style>
 </head>
 <body>
+
+  <!-- Botón PDF -->
+  <a href="Manual_General_Salidas.pdf" target="_blank" class="pdf-btn">📄 Manual PDF</a>
+
   <h1>📊 Menú – Monitoreo de Salidas</h1>
   <div class="menu">
-    <div class="card" onclick="location.href='https://lizandrolumbreras.github.io/MONITOREO-SALIDAS-DULCES/MONITOREO%20DULCES%20LIQUIDO/index.html'">
-      <h2>Monitoreo Dulces</h2>
-      <p>Consulta en tiempo real las salidas de Dulces Líquidos</p>
+    <div class="card" onclick="location.href='monitoreo_dulces.html'">
+      <h3>Monitoreo Dulces</h3>
+      <p>Consulta en tiempo real las salidas de Dulces</p>
     </div>
-
-    <div class="card" onclick="location.href='https://lizandrolumbreras.github.io/MONITOREO-SALIDAS-DULCES/MONITOREO%20LIQUIDO/index.html'">
-      <h2>Monitoreo Líquido</h2>
+    <div class="card" onclick="location.href='monitoreo_liquidos.html'">
+      <h3>Monitoreo Líquido</h3>
       <p>Consulta en tiempo real las salidas de Líquidos</p>
     </div>
   </div>
+
 </body>
 </html>
