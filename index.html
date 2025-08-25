@@ -1,85 +1,168 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Menú – Monitoreo de Salidas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      min-height: 100vh;
-      background: linear-gradient(to right,#00416A,#E4E5E6);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
+    :root{
+      --azul:#00416A;
+      --gris:#E4E5E6;
+      --card-bg: rgba(255,255,255,.18);
+      --card-bd: rgba(255,255,255,.35);
+      --sombra: 0 12px 30px rgba(0,0,0,.22);
+      --rojo:#e60000; --rojo-h:#b00000;
     }
 
-    h1 {
-      text-align: center;
-      color: white;
-      margin-bottom: 30px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      font-family:'Poppins',system-ui,Segoe UI,Arial;
+      color:#0e1a2b;
+      /* Fondo degradado moderno */
+      background: linear-gradient(115deg, var(--azul) 0%, #0f6aa6 40%, var(--gris) 100%);
+      display:flex; align-items:center; justify-content:center;
+      position:relative; padding:24px;
+      overflow-x:hidden;
     }
 
-    .menu {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+    /* Marca de agua grande al centro */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background: url('logo_proveedora.webp') no-repeat center 48%;
+      background-size: min(1000px, 70vw);
+      opacity:.08; pointer-events:none;
+      filter:saturate(1) contrast(1.05);
     }
 
-    .card {
-      background: rgba(255,255,255,0.2);
-      padding: 20px;
-      border-radius: 12px;
-      width: 220px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-      cursor: pointer;
+    .wrap{
+      width:100%; max-width:1100px;
+      display:flex; flex-direction:column; align-items:center; gap:22px;
     }
 
-    .card:hover { transform: scale(1.05); }
-
-    /* 🔹 Botón PDF en la esquina */
-    .pdf-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background-color: #e60000;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    h1{
+      margin:0;
+      color:#fff;
+      text-align:center;
+      font-weight:700;
+      font-size: clamp(22px, 3.4vw, 38px);
+      text-shadow: 0 10px 22px rgba(0,0,0,.35);
+      letter-spacing:.2px;
     }
 
-    .pdf-btn:hover {
-      background-color: #b00000;
+    .menu{
+      display:flex; gap:28px; flex-wrap:wrap; justify-content:center;
+      width:100%;
+    }
+
+    .card{
+      background: var(--card-bg);
+      border:1px solid var(--card-bd);
+      border-radius:18px;
+      width:min(460px, 92vw);
+      padding:24px 22px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: var(--sombra);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor:pointer;
+      color:#09253e;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      background: rgba(255,255,255,.24);
+      box-shadow: 0 16px 34px rgba(0,0,0,.25);
+    }
+    .card h3{
+      margin:0 0 6px 0; font-size: clamp(18px, 2.2vw, 22px); color:#0c2d57;
+    }
+    .card p{
+      margin:0; opacity:.85; color:#0b2b4f;
+      font-size: clamp(14px, 1.9vw, 15px);
+    }
+
+    /* Botón flotante superior derecha con menú */
+    .fab{
+      position:fixed; top:16px; right:16px; z-index:10;
+      display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+    }
+    .pdf-btn{
+      background: var(--rojo);
+      color:#fff; border:none; border-radius:10px;
+      padding:10px 14px; font-weight:600; font-size:14px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+      cursor:pointer;
+    }
+    .pdf-btn:hover{ background: var(--rojo-h); }
+
+    .pdf-menu{
+      display:none;
+      background: rgba(255,255,255,.98);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:12px; overflow:hidden;
+      min-width:180px;
+      box-shadow: 0 14px 28px rgba(0,0,0,.22);
+      backdrop-filter: blur(4px);
+    }
+    .pdf-menu a{
+      display:block; padding:10px 12px; text-decoration:none;
+      color:#0e1a2b; font-size:14px;
+    }
+    .pdf-menu a:hover{ background:#f3f6fb; }
+
+    /* Responsive: separa más el header del contenido en móviles */
+    @media (max-width:560px){
+      .wrap{ gap:18px }
     }
   </style>
 </head>
 <body>
-
-  <!-- Botón PDF -->
-  <a href="Manual_General_Salidas.pdf" target="_blank" class="pdf-btn">📄 Manual PDF</a>
-
-  <h1>📊 Menú – Monitoreo de Salidas</h1>
-  <div class="menu">
-    <div class="card" onclick="location.href='monitoreo_dulces.html'">
-      <h3>Monitoreo Dulces</h3>
-      <p>Consulta en tiempo real las salidas de Dulces</p>
-    </div>
-    <div class="card" onclick="location.href='monitoreo_liquidos.html'">
-      <h3>Monitoreo Líquido</h3>
-      <p>Consulta en tiempo real las salidas de Líquidos</p>
+  <!-- FAB PDF -->
+  <div class="fab">
+    <button class="pdf-btn" id="btnPdf">📄 Manual</button>
+    <div class="pdf-menu" id="pdfMenu" aria-label="opciones manual">
+      <!-- Ver en nueva pestaña -->
+      <a href="Manual_General_Salidas.pdf" target="_blank" rel="noopener">👁️ Ver Manual</a>
+      <!-- Descargar directo -->
+      <a href="Manual_General_Salidas.pdf" download="Manual_General_Salidas.pdf">⬇️ Descargar PDF</a>
     </div>
   </div>
 
+  <div class="wrap">
+    <h1>📊 Menú – Monitoreo de Salidas</h1>
+
+    <div class="menu">
+      <div class="card" onclick="location.href='monitoreo_dulces.html'">
+        <h3>Monitoreo Dulces</h3>
+        <p>Consulta en tiempo real las salidas de Dulces</p>
+      </div>
+
+      <div class="card" onclick="location.href='monitoreo_liquidos.html'">
+        <h3>Monitoreo Líquidos</h3>
+        <p>Consulta en tiempo real las salidas de Líquidos</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle del menú del PDF (ver/descargar)
+    const btn = document.getElementById('btnPdf');
+    const menu = document.getElementById('pdfMenu');
+
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Cerrar si se hace clic fuera
+    document.addEventListener('click', ()=>{
+      menu.style.display = 'none';
+    });
+
+    // Evitar que el clic dentro del menú lo cierre
+    menu.addEventListener('click', (e)=> e.stopPropagation());
+  </script>
 </body>
 </html>
