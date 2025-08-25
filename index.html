@@ -1,168 +1,103 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú – Monitoreo de Salidas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --azul:#00416A;
-      --gris:#E4E5E6;
-      --card-bg: rgba(255,255,255,.18);
-      --card-bd: rgba(255,255,255,.35);
-      --sombra: 0 12px 30px rgba(0,0,0,.22);
-      --rojo:#e60000; --rojo-h:#b00000;
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0; 
+      padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(to right,#00416A,#E4E5E6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0; min-height:100vh;
-      font-family:'Poppins',system-ui,Segoe UI,Arial;
-      color:#0e1a2b;
-      /* Fondo degradado moderno */
-      background: linear-gradient(115deg, var(--azul) 0%, #0f6aa6 40%, var(--gris) 100%);
-      display:flex; align-items:center; justify-content:center;
-      position:relative; padding:24px;
-      overflow-x:hidden;
+    /* 🔹 Marca de agua grande (como en tu ejemplo) */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;              /* ocupa gran parte de la pantalla */
+      height: 80%;
+      background: url('logo_proveedora.webp') no-repeat center center;
+      background-size: contain;
+      opacity: 0.12;           /* 🔹 Opacidad tenue para que no opaque el contenido */
+      z-index: 0;
+      pointer-events: none;
     }
 
-    /* Marca de agua grande al centro */
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      background: url('logo_proveedora.webp') no-repeat center 48%;
-      background-size: min(1000px, 70vw);
-      opacity:.08; pointer-events:none;
-      filter:saturate(1) contrast(1.05);
+    h1 {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      z-index: 1;
+      position: relative;
     }
 
-    .wrap{
-      width:100%; max-width:1100px;
-      display:flex; flex-direction:column; align-items:center; gap:22px;
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+      z-index: 1;
+      position: relative;
     }
 
-    h1{
-      margin:0;
-      color:#fff;
-      text-align:center;
-      font-weight:700;
-      font-size: clamp(22px, 3.4vw, 38px);
-      text-shadow: 0 10px 22px rgba(0,0,0,.35);
-      letter-spacing:.2px;
+    .card {
+      background: rgba(255, 255, 255, 0.25); /* 🔹 Translúcido */
+      backdrop-filter: blur(12px);           /* 🔹 efecto cristal */
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 14px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
     }
 
-    .menu{
-      display:flex; gap:28px; flex-wrap:wrap; justify-content:center;
-      width:100%;
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      background: rgba(255, 255, 255, 0.35);
     }
 
-    .card{
-      background: var(--card-bg);
-      border:1px solid var(--card-bd);
-      border-radius:18px;
-      width:min(460px, 92vw);
-      padding:24px 22px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: var(--sombra);
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-      cursor:pointer;
-      color:#09253e;
-    }
-    .card:hover{
-      transform: translateY(-3px);
-      background: rgba(255,255,255,.24);
-      box-shadow: 0 16px 34px rgba(0,0,0,.25);
-    }
-    .card h3{
-      margin:0 0 6px 0; font-size: clamp(18px, 2.2vw, 22px); color:#0c2d57;
-    }
-    .card p{
-      margin:0; opacity:.85; color:#0b2b4f;
-      font-size: clamp(14px, 1.9vw, 15px);
+    .card h2 {
+      color: #00416A;
+      font-size: 18px;
+      margin-bottom: 10px;
     }
 
-    /* Botón flotante superior derecha con menú */
-    .fab{
-      position:fixed; top:16px; right:16px; z-index:10;
-      display:flex; flex-direction:column; align-items:flex-end; gap:8px;
-    }
-    .pdf-btn{
-      background: var(--rojo);
-      color:#fff; border:none; border-radius:10px;
-      padding:10px 14px; font-weight:600; font-size:14px;
-      box-shadow: 0 8px 18px rgba(0,0,0,.28);
-      cursor:pointer;
-    }
-    .pdf-btn:hover{ background: var(--rojo-h); }
-
-    .pdf-menu{
-      display:none;
-      background: rgba(255,255,255,.98);
-      border:1px solid rgba(255,255,255,.6);
-      border-radius:12px; overflow:hidden;
-      min-width:180px;
-      box-shadow: 0 14px 28px rgba(0,0,0,.22);
-      backdrop-filter: blur(4px);
-    }
-    .pdf-menu a{
-      display:block; padding:10px 12px; text-decoration:none;
-      color:#0e1a2b; font-size:14px;
-    }
-    .pdf-menu a:hover{ background:#f3f6fb; }
-
-    /* Responsive: separa más el header del contenido en móviles */
-    @media (max-width:560px){
-      .wrap{ gap:18px }
+    .card p {
+      color: #111;
+      font-size: 14px;
+      margin: 0;
     }
   </style>
 </head>
 <body>
-  <!-- FAB PDF -->
-  <div class="fab">
-    <button class="pdf-btn" id="btnPdf">📄 Manual</button>
-    <div class="pdf-menu" id="pdfMenu" aria-label="opciones manual">
-      <!-- Ver en nueva pestaña -->
-      <a href="Manual_General_Salidas.pdf" target="_blank" rel="noopener">👁️ Ver Manual</a>
-      <!-- Descargar directo -->
-      <a href="Manual_General_Salidas.pdf" download="Manual_General_Salidas.pdf">⬇️ Descargar PDF</a>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <h1>📊 Menú – Monitoreo de Salidas</h1>
-
-    <div class="menu">
-  <div class="card" onclick="location.href='https://lizandrolumbreras.github.io/MONITOREO-SALIDAS-DULCES/MONITOREO%20DULCES%20LIQUIDO/index.html'">
+  <h1>📊 Menú – Monitoreo de Salidas</h1>
+  <div class="menu">
+    <div class="card" onclick="location.href='https://lizandrolumbreras.github.io/MONITOREO-SALIDAS-DULCES/MONITOREO%20DULCES%20LIQUIDO/index.html'">
       <h2>Monitoreo Dulces</h2>
       <p>Consulta en tiempo real las salidas de Dulces Líquidos</p>
     </div>
 
-
-      <div class="card" onclick="location.href='https://lizandrolumbreras.github.io/MONITOREO-SALIDAS-DULCES/MONITOREO%20LIQUIDO/index.html'">
+    <div class="card" onclick="location.href='https://lizandrolumbreras.github.io/MONITOREO-SALIDAS-DULCES/MONITOREO%20LIQUIDO/index.html'">
       <h2>Monitoreo Líquido</h2>
       <p>Consulta en tiempo real las salidas de Líquidos</p>
     </div>
   </div>
-
-  <script>
-    // Toggle del menú del PDF (ver/descargar)
-    const btn = document.getElementById('btnPdf');
-    const menu = document.getElementById('pdfMenu');
-
-    btn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // Cerrar si se hace clic fuera
-    document.addEventListener('click', ()=>{
-      menu.style.display = 'none';
-    });
-
-    // Evitar que el clic dentro del menú lo cierre
-    menu.addEventListener('click', (e)=> e.stopPropagation());
-  </script>
 </body>
 </html>
